@@ -21,4 +21,9 @@ public class IntentHandler {
         intent.putExtra("position", position);
         context.startActivity(intent);
     }
+    public static void SearchToResult(Context context, String imgUri){
+        Intent intent = new Intent(context, ResultActivity.class);
+        intent.putExtra("imgUri", imgUri);
+        context.startActivity(intent);
+    }
 }

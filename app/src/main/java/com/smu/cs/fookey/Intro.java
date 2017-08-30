@@ -20,6 +20,6 @@ public class Intro extends AppCompatActivity {
                 startActivity(intent);
             }
         };
-        handler.sendEmptyMessageDelayed(0, 2000);
+        handler.sendEmptyMessageDelayed(0, 1000);
     }
 }

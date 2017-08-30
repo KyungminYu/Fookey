@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
     //Retrofit2 추가해야함.  done
 public class ApplicationController extends Application {
     private final String IP="117.16.44.14";
-    private final int PORT=2012;
+    private final int PORT=2014;
     //Application 인스턴스 선언
     private static ApplicationController instance;
     public static ApplicationController getInstance() {

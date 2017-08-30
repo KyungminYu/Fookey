@@ -1,25 +1,22 @@
 package com.smu.cs.fookey.Network;
 
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.smu.cs.fookey.MainActivity;
-import com.smu.cs.fookey.SearchActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -34,6 +31,11 @@ import retrofit2.Response;
 public class NetworkApi extends AppCompatActivity {
     private NetworkService networkService;
     private static NetworkApi instance;
+    private Token token;
+    private List<String> mainList;
+    private List<String> subList;
+    private Description retDesc;
+
     private void initNetworkService(){
         // TODO: 13. ApplicationController 객체를 이용하여 NetworkService 가져오기
         networkService = ApplicationController.getInstance().getNetworkService();
@@ -42,14 +44,81 @@ public class NetworkApi extends AppCompatActivity {
     NetworkApi(){
         NetworkApi.instance=this;
         initNetworkService();
+        getNetworkToken();
     }
 
     public static NetworkApi getNetworkApi() {
         return instance;
     }
 
-    public void sendMainAnswer(String ans){
-        Call<Category> getMainAns=networkService.sendMainAnswer(ans);
+    private void getNetworkToken(){
+        Call<Token> getToken=networkService.getToken();
+        Log.d("MyTag","networkService START");
+        getToken.enqueue(new Callback<Token>() {
+            @Override
+            public void onResponse(Call<Token> call, Response<Token> response) {
+                int statusCode = response.code();
+                if(response.isSuccessful()){
+                    Log.d("MyTag","------------------------"+statusCode);
+                    token=(Token)response.body();
+                }
+                else{
+                    Log.d("MyTag","FFFFFFFFFFF"+statusCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Token> call, Throwable t) {
+
+                Log.d("MyTag","=========================FAIL");
+            }
+        });
+    }
+    public BlockingQueue<List<String>> sendImage(Context context, String path){
+        mainList = null;
+
+        final BlockingQueue<List<String>> blockingQueue  = new ArrayBlockingQueue<>(1);
+        MultipartBody.Part body = getCompressedImage(context, path);
+        RequestBody description = getMultipartDescription(token.getToken());
+        Call<Category> call = networkService.sendImage(description, body);
+        call.enqueue(new Callback<Category>() {
+            @Override
+            public void onResponse(Call<Category> call, Response<Category> response) {
+                List<String> categories = response.body().getCategories();
+                Log.i("MyTag", categories.get(0));
+                blockingQueue.add(categories);
+            }
+
+            @Override
+            public void onFailure(Call<Category> call, Throwable t) {
+
+            }
+//            @Override
+//            public void onResponse(Call<Category> call, Response<Category> response) {
+//                int statusCode = response.code();
+//                if (response.isSuccessful()) {
+//                    Log.i("MyTag", "" + statusCode);
+//                    Category category = (Category) response.body();
+//                    if(mainList != null)
+//                        Log.i("MyTag", mainList.get(0));
+//                } else {
+//
+//                    Log.d("MyTag", "ELSE ELSE ELSE ELSE ");
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Category> call, Throwable t) {
+//
+//                Log.d("MyTag", "FAILURE");
+//            }
+        });
+        return blockingQueue;
+    }
+
+    public List<String> sendMainAnswer(String ans){
+        subList=null;
+        Call<Category> getMainAns=networkService.sendMainAnswer(ans,token.getToken());
         getMainAns.enqueue(new Callback<Category>() {
             @Override
             public void onResponse(Call<Category> call, Response<Category> response) {
@@ -57,6 +126,7 @@ public class NetworkApi extends AppCompatActivity {
                 if(response.isSuccessful()){
                     Log.d("MyTag",""+statusCode);
                     Category category=(Category)response.body();
+                    subList=category.getCategories();
                     // 채워넣어야 함.
                 }
                 else{
@@ -69,10 +139,13 @@ public class NetworkApi extends AppCompatActivity {
                 Log.d("MyTag" ,  t.getMessage());
             }
         });
+        while(subList==null){}
+        return subList;
     }
 
-    public void sendSubAnswer(String ans){
-        Call<Description> getMainAns=networkService.sendSubAnswer(ans);
+    public Description sendSubAnswer(String ans){
+        retDesc=null;
+        Call<Description> getMainAns=networkService.sendSubAnswer(ans,token.getToken());
         getMainAns.enqueue(new Callback<Description>() {
             @Override
             public void onResponse(Call<Description> call, Response<Description> response) {
@@ -80,8 +153,9 @@ public class NetworkApi extends AppCompatActivity {
                 if(response.isSuccessful()){
                     Log.d("MyTag",""+statusCode);
                     Description description=(Description)response.body();
-                    Log.d("description",description.description);
+                    // Log.d("description",description.description);
                     // 채워넣어야 함.
+                    retDesc=description;
                 }
                 else{
 
@@ -93,32 +167,10 @@ public class NetworkApi extends AppCompatActivity {
                 Log.d("MyTag" ,  t.getMessage());
             }
         });
+        while(retDesc==null){}
+        return retDesc;
     }
 
-    public void sendImage(Context context, String path){
-        //getImageNameToUri(uri);
-        MultipartBody.Part body = getCompressedImage(context, path);
-        RequestBody description = getMultipartDescription("I send a photo image");
-        Call<Category> call = networkService.sendImage(description, body);
-        call.enqueue(new Callback<Category>() {
-            @Override
-            public void onResponse(Call<Category> call, Response<Category> response) {
-                int statusCode = response.code();
-                if(response.isSuccessful()){
-                    Log.d("MyTag",""+statusCode);
-                    Category category=(Category)response.body();
-
-                }
-                else{
-
-                }
-            }
-            @Override
-            public void onFailure(Call<Category> call, Throwable t) {
-
-            }
-        });
-    }
     private MultipartBody.Part getCompressedImage(Context context, String path){
         String imgUri = path;
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -151,3 +203,5 @@ public class NetworkApi extends AppCompatActivity {
         return description;
     }
 }
+
+
