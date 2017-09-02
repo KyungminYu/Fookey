@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -25,8 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import retrofit2.http.PATCH;
+
 public class ResultActivity extends AppCompatActivity implements View.OnClickListener{
-    private ImageView resultImg;
+    private ImageView image_result;
     private TextView resultText;
     private Button yesBtn, noBtn;
     private NetworkApi networkApi;
@@ -34,21 +37,15 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
     private String imgPath;
     private Context mContext;
     private List<String> res;
+    private int width, height;
     private void initNetworkApi(){networkApi=NetworkApi.getNetworkApi(); }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
-        flag = 0;
-        res = null;
-        mContext = getApplicationContext();
-        imgPath = getIntent().getStringExtra("imgUri");
-        resultImg = (ImageView)findViewById(R.id.Image_result);
-        resultText = (TextView)findViewById(R.id.text_result);
-        yesBtn = (Button)findViewById(R.id.btn_yes);
-        noBtn = (Button)findViewById(R.id.btn_no);
 
+        initData();
         initNetworkApi();
         setImage(imgPath);
         setText(flag, mContext,imgPath);
@@ -56,15 +53,31 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         yesBtn.setOnClickListener(this);
         noBtn.setOnClickListener(this);
     }
+    private void initData(){
+        flag = 0;
+        res = null;
+        mContext = getApplicationContext();
+        imgPath = getIntent().getStringExtra("imgUri");
+        image_result = (ImageView)findViewById(R.id.image_result);
+        resultText = (TextView)findViewById(R.id.text_result);
+        yesBtn = (Button)findViewById(R.id.btn_yes);
+        noBtn = (Button)findViewById(R.id.btn_no);
+
+        DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
+        width = dm.widthPixels;
+        height = dm.heightPixels;
+    }
     private void setImage(String Path){
+        Log.i("PATH", Path);
         File imgFile = new  File(Path);
         if(imgFile.exists()){
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            int len = myBitmap.getWidth();
-            resultImg.setImageBitmap(myBitmap);
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) resultImg.getLayoutParams();
-            params.width = params.height = len;
-            resultImg.setLayoutParams(params);
+            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            int len = bitmap.getWidth() < bitmap.getHeight() ? bitmap.getWidth() : bitmap.getHeight();
+            image_result.setImageBitmap(bitmap);
+            //image_result.getLayoutParams().height = width;
+            //image_result.getLayoutParams().width = width;
+            image_result.setRotation(90);
+            image_result.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
     }
     private void setText(int flag, Context context, String path){
@@ -104,11 +117,11 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 else{
                     //networkApi.sendSubAnswer("yes");
-                    // 여기
+                    // res.get(0) 으로 network api call
                     Toast.makeText(mContext, "change Activity At the here", Toast.LENGTH_LONG).show();
-                    Description description = new Description("","","","", new Nutrient(0,0,0));
+                    Description description = new Description(res.get(0),"한식 > 밥류","313kcal / 1공기 (210g)","안전식품", new Nutrient(91,8,1));
                     finish();
-                    IntentHandler.ResultToSpecific(mContext, description);
+                    IntentHandler.ResultToSpecific(mContext, description, imgPath);
                 }
                 break;
             case R.id.btn_no:

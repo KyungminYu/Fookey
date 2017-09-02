@@ -20,7 +20,8 @@ public class DataBaseHandler extends SQLiteOpenHelper implements dbInterface{
     private static final String DATABASE_NAME = "DB";
     private static final String TABLE_NAME = "foodDataTable";
     private static final String KEY_ID = "id";
-    private static final String KEY_CATEGORY = "category";
+    private static final String KEY_FOOD_NAME = "foodName";
+    private static final String KEY_PATH = "path";
     private static final String KEY_DATE = "date";
 
     public DataBaseHandler(Context context) {
@@ -35,7 +36,8 @@ public class DataBaseHandler extends SQLiteOpenHelper implements dbInterface{
         //DB를 새로 만든다.
         String CREATE_TABLE1 = "CREATE TABLE " + TABLE_NAME + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"
-                + KEY_CATEGORY + " TEXT,"
+                + KEY_FOOD_NAME + " TEXT,"
+                + KEY_PATH + " TEXT,"
                 + KEY_DATE + " LONG " + ")";
         db.execSQL(CREATE_TABLE1);
     }
@@ -50,7 +52,8 @@ public class DataBaseHandler extends SQLiteOpenHelper implements dbInterface{
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(KEY_CATEGORY, data.getCategory());
+        contentValues.put(KEY_FOOD_NAME, data.getFood_name());
+        contentValues.put(KEY_PATH, data.getPath());
         contentValues.put(KEY_DATE, data.getDate());
 
         long returnResult = db.insert(TABLE_NAME, null, contentValues);
@@ -70,7 +73,8 @@ public class DataBaseHandler extends SQLiteOpenHelper implements dbInterface{
             do {
                 data = new FoodData();
                 data.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
-                data.setCategory(cursor.getString(cursor.getColumnIndex(KEY_CATEGORY)));
+                data.setFood_name(cursor.getString(cursor.getColumnIndex(KEY_FOOD_NAME)));
+                data.setPath(cursor.getString(cursor.getColumnIndex(KEY_PATH)));
                 data.setDate(cursor.getString(cursor.getColumnIndex(KEY_DATE)));
                 dataList.add(data);
             } while (cursor.moveToNext());

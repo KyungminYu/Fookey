@@ -31,8 +31,10 @@ public class HistoryActivity extends AppCompatActivity {
 
         List<FoodData> foodDatas = dbHandler.getDataList();
         this.foodDataList = foodDatas;
-        FoodData tmp = new FoodData("밥", "1-1");
-        this.foodDataList.add(tmp);
+        FoodData tmp1 = new FoodData("밥", "1-1", "");
+        FoodData tmp2 = new FoodData("밥dfsdf", "sdfds1-1", "sdfds");
+        this.foodDataList.add(tmp1);
+        this.foodDataList.add(tmp2);
     }
     private void initializationListView() {
         foodListLayoutManager = new LinearLayoutManager(this);

@@ -23,12 +23,13 @@ public class IntentHandler {
         Intent intent = new Intent(context, HistoryActivity.class);
         context.startActivity(intent);
     }
-    public static void historyToSpecific(Context context, Description description){
+    public static void historyToSpecific(Context context, Description description, String path){
         Intent intent = new Intent(context, SpecificActivity.class);
         Bundle bundle = new Bundle();
         List<Description> descriptionList = new ArrayList<>();
         descriptionList.add(description);
         bundle.putSerializable("description", (Serializable) descriptionList);
+        intent.putExtra("path", path);
         intent.putExtras(bundle);
         context.startActivity(intent);
     }
@@ -37,12 +38,13 @@ public class IntentHandler {
         intent.putExtra("imgUri", imgUri);
         context.startActivity(intent);
     }
-    public static void ResultToSpecific(Context context, Description description){
+    public static void ResultToSpecific(Context context, Description description, String path){
         Intent intent = new Intent(context, SpecificActivity.class);
         Bundle bundle = new Bundle();
         List<Description> descriptionList = new ArrayList<>();
         descriptionList.add(description);
         bundle.putSerializable("description", (Serializable) descriptionList);
+        intent.putExtra("path", path);
         intent.putExtras(bundle);
         context.startActivity(intent);
     }

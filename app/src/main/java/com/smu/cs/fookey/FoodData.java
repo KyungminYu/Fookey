@@ -6,30 +6,53 @@ package com.smu.cs.fookey;
 
 public class FoodData {
     private int id;
-    private String category;
+    private String food_name;
+    private String path;
     private String date;
 
     public FoodData() {
     }
-
-    public FoodData(String category, String date) {
-        this.category = category;
+    public FoodData(String food_name, String path, String date) {
+        this.food_name = food_name;
+        this.path = path;
+        this.date = date;
+    }
+    public FoodData(int id, String food_name, String path, String date) {
+        this.id = id;
+        this.food_name = food_name;
+        this.path = path;
         this.date = date;
     }
 
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
-    public String getCategory() {
-        return category;
-    }
-    public void setCategory(String category) {
-        this.category = category;
-    }
-    public String getDate() { return date; }
-    public void setDate(String date) { this.date = date; }
 
+    public String getFood_name() {
+        return food_name;
+    }
+
+    public void setFood_name(String food_name) {
+        this.food_name = food_name;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 }
