@@ -5,6 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.smu.cs.fookey.Network.Description;
+import com.smu.cs.fookey.Network.Nutrient;
+
 import java.util.List;
 
 /**
@@ -26,7 +29,9 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                IntentHandler.historyToSpecific(v.getContext(), getItemCount() - 1);
+                // 서버에서 받던지 내부 DB로 구성하든지 받긴 해야함
+                Description description = new Description("","","","", new Nutrient(0,0,0));
+                IntentHandler.historyToSpecific(v.getContext(), description);
             }
         });
         return new FoodDataHolder(view);

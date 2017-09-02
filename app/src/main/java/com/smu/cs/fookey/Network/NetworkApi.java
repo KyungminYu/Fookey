@@ -14,9 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -53,67 +52,52 @@ public class NetworkApi extends AppCompatActivity {
 
     private void getNetworkToken(){
         Call<Token> getToken=networkService.getToken();
-        Log.d("MyTag","networkService START");
         getToken.enqueue(new Callback<Token>() {
             @Override
             public void onResponse(Call<Token> call, Response<Token> response) {
                 int statusCode = response.code();
                 if(response.isSuccessful()){
-                    Log.d("MyTag","------------------------"+statusCode);
                     token=(Token)response.body();
                 }
                 else{
-                    Log.d("MyTag","FFFFFFFFFFF"+statusCode);
                 }
             }
 
             @Override
             public void onFailure(Call<Token> call, Throwable t) {
-
-                Log.d("MyTag","=========================FAIL");
             }
         });
     }
-    public BlockingQueue<List<String>> sendImage(Context context, String path){
+    public List<String> sendImage(Context context, String path) throws ExecutionException, InterruptedException {
         mainList = null;
 
-        final BlockingQueue<List<String>> blockingQueue  = new ArrayBlockingQueue<>(1);
+        final Future<List<String>>[] ret = new Future[]{null};
         MultipartBody.Part body = getCompressedImage(context, path);
         RequestBody description = getMultipartDescription(token.getToken());
         Call<Category> call = networkService.sendImage(description, body);
         call.enqueue(new Callback<Category>() {
             @Override
             public void onResponse(Call<Category> call, Response<Category> response) {
-                List<String> categories = response.body().getCategories();
-                Log.i("MyTag", categories.get(0));
-                blockingQueue.add(categories);
+                int statusCode = response.code();
+                if (response.isSuccessful()) {
+                    Log.i("MyTag", "" + statusCode);
+                    Category category = (Category) response.body();
+                    ret[0] = (Future<List<String>>) category.getCategories();
+                    if(mainList != null)
+                        Log.i("MyTag", mainList.get(0));
+                } else {
+
+                    Log.d("MyTag", "ELSE ELSE ELSE ELSE ");
+                }
             }
 
             @Override
             public void onFailure(Call<Category> call, Throwable t) {
 
+                Log.d("MyTag", "FAILURE");
             }
-//            @Override
-//            public void onResponse(Call<Category> call, Response<Category> response) {
-//                int statusCode = response.code();
-//                if (response.isSuccessful()) {
-//                    Log.i("MyTag", "" + statusCode);
-//                    Category category = (Category) response.body();
-//                    if(mainList != null)
-//                        Log.i("MyTag", mainList.get(0));
-//                } else {
-//
-//                    Log.d("MyTag", "ELSE ELSE ELSE ELSE ");
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Category> call, Throwable t) {
-//
-//                Log.d("MyTag", "FAILURE");
-//            }
         });
-        return blockingQueue;
+        return ret[0].get();
     }
 
     public List<String> sendMainAnswer(String ans){
