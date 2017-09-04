@@ -7,10 +7,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +33,6 @@ public class NetworkApi extends AppCompatActivity {
     private NetworkService networkService;
     private static NetworkApi instance;
     private Token token;
-    private List<String> mainList;
-    private List<String> subList;
-    private Description retDesc;
 
     private void initNetworkService(){
         // TODO: 13. ApplicationController 객체를 이용하여 NetworkService 가져오기
@@ -68,91 +67,53 @@ public class NetworkApi extends AppCompatActivity {
             }
         });
     }
-    public List<String> sendImage(Context context, String path) throws ExecutionException, InterruptedException {
-        mainList = null;
 
-        final Future<List<String>>[] ret = new Future[]{null};
+    public List<String> sendImage(Context context, String path)  {
+        List<String> mainList = null;
         MultipartBody.Part body = getCompressedImage(context, path);
         RequestBody description = getMultipartDescription(token.getToken());
         Call<Category> call = networkService.sendImage(description, body);
-        call.enqueue(new Callback<Category>() {
-            @Override
-            public void onResponse(Call<Category> call, Response<Category> response) {
-                int statusCode = response.code();
-                if (response.isSuccessful()) {
-                    Log.i("MyTag", "" + statusCode);
-                    Category category = (Category) response.body();
-                    ret[0] = (Future<List<String>>) category.getCategories();
-                    if(mainList != null)
-                        Log.i("MyTag", mainList.get(0));
-                } else {
-
-                    Log.d("MyTag", "ELSE ELSE ELSE ELSE ");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Category> call, Throwable t) {
-
-                Log.d("MyTag", "FAILURE");
-            }
-        });
-        return ret[0].get();
+        Category category = null;
+        try {
+            category = call.execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(call.isExecuted())
+            mainList = category.getCategories();
+        else
+            mainList = new ArrayList<>();
+        return mainList;
     }
 
-    public List<String> sendMainAnswer(String ans){
-        subList=null;
-        Call<Category> getMainAns=networkService.sendMainAnswer(ans,token.getToken());
-        getMainAns.enqueue(new Callback<Category>() {
-            @Override
-            public void onResponse(Call<Category> call, Response<Category> response) {
-                int statusCode = response.code();
-                if(response.isSuccessful()){
-                    Log.d("MyTag",""+statusCode);
-                    Category category=(Category)response.body();
-                    subList=category.getCategories();
-                    // 채워넣어야 함.
-                }
-                else{
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Category> call, Throwable t) {
-                Log.d("MyTag" ,  t.getMessage());
-            }
-        });
-        while(subList==null){}
+    public List<String> sendMainAnswer(String ans, final TextView text_result){
+        List<String> subList=null;
+        Call<Category> call = networkService.sendMainAnswer(ans, token.getToken());
+        Category category = null;
+        try {
+            category = call.execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(call.isExecuted())
+            subList = category.getCategories();
+        else
+            subList = new ArrayList<>();
         return subList;
     }
 
     public Description sendSubAnswer(String ans){
-        retDesc=null;
-        Call<Description> getMainAns=networkService.sendSubAnswer(ans,token.getToken());
-        getMainAns.enqueue(new Callback<Description>() {
-            @Override
-            public void onResponse(Call<Description> call, Response<Description> response) {
-                int statusCode = response.code();
-                if(response.isSuccessful()){
-                    Log.d("MyTag",""+statusCode);
-                    Description description=(Description)response.body();
-                    // Log.d("description",description.description);
-                    // 채워넣어야 함.
-                    retDesc=description;
-                }
-                else{
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Description> call, Throwable t) {
-                Log.d("MyTag" ,  t.getMessage());
-            }
-        });
-        while(retDesc==null){}
-        return retDesc;
+        Description retDesc = null;
+        Call<Description> call = networkService.sendSubAnswer(ans,token.getToken());
+        try {
+            retDesc = call.execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(call.isExecuted())
+            return retDesc;
+        else
+            return null;
     }
 
     private MultipartBody.Part getCompressedImage(Context context, String path){

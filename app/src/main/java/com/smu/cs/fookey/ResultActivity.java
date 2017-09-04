@@ -1,9 +1,14 @@
 package com.smu.cs.fookey;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -32,13 +37,27 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView image_result;
     private TextView resultText;
     private Button yesBtn, noBtn;
-    private NetworkApi networkApi;
     private int flag;
     private String imgPath;
     private Context mContext;
-    private List<String> res;
+    private List<String> res = null;
     private int width, height;
+
+    private NetworkApi networkApi;
     private void initNetworkApi(){networkApi=NetworkApi.getNetworkApi(); }
+
+
+
+    private ProgressDialog progDialog;
+    private Handler mHandler;
+
+    private Handler confirmHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            //완료 후 실행할 처리 삽입
+            resultText.setText(res.get(0));
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +67,37 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         initData();
         initNetworkApi();
         setImage(imgPath);
-        setText(flag, mContext,imgPath);
 
+        mHandler = new Handler();
+
+        progDialog = new ProgressDialog( this );
+
+        progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progDialog.setMessage("please wait....");
+        progDialog.show();
+        //Thread 사용은 선택이 아니라 필수
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                //TODO : 시간이 걸리는 처리 삽입
+                res = networkApi.sendImage(mContext, imgPath);
+                //Handler를 호출
+                confirmHandler.sendEmptyMessage(0);
+
+                //dismiss(다이알로그종료)는 반드시 새로운 쓰레드 안에서 실행되어야한다
+                progDialog.dismiss();
+            }
+        }).start();
+        ////
+        //setText(flag);
+///
         yesBtn.setOnClickListener(this);
         noBtn.setOnClickListener(this);
     }
     private void initData(){
         flag = 0;
-        res = null;
         mContext = getApplicationContext();
         imgPath = getIntent().getStringExtra("imgUri");
         image_result = (ImageView)findViewById(R.id.image_result);
@@ -80,32 +122,22 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
             image_result.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
     }
-    private void setText(int flag, Context context, String path){
+    private void setText(int flag) {
         if(flag == 0){
-            //for test
-            res = new ArrayList<>();
-            res.add("dish");
-            res.add("side");
-            res.add("soup");
-            res.add("rice");
-//            try {
-//                res  = networkApi.sendImage(context, path);
-//            } catch (ExecutionException e) {
-//                e.printStackTrace();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+
+
+
         }
         else{
             //for test
             res = new ArrayList<>();
             res.add("kimch");
             res.add("fiedEgg");
-            res.add("soup");
-            res.add("rice");
+            res.add("spinich");
+            res.add("seaweed");
             //res = networkApi.sendMainAnswer("yes");
         }
-        resultText.setText(res.get(0));
+        //resultText.setText(res.get(0));
     }
     @Override
     public void onClick(View v) {
@@ -113,7 +145,7 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.btn_yes:
                 if(flag == 0){
                     flag = 1;
-                    setText(flag, mContext, imgPath);
+                    setText(flag);
                 }
                 else{
                     //networkApi.sendSubAnswer("yes");
@@ -133,10 +165,3 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 }
-//
-//    /*
-//     * for Network
-//     */
-//    private NetworkApi networkApi;
-//    private void initNetworkApi(){networkApi=NetworkApi.getNetworkApi();}
-//                                IntentHandler.SearchToResult(mContext, path);
