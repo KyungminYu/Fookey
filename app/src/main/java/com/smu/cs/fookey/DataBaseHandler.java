@@ -19,7 +19,7 @@ public class DataBaseHandler extends SQLiteOpenHelper implements dbInterface{
     // Database Name
     private static final String DATABASE_NAME = "DB";
     private static final String TABLE_NAME = "foodDataTable";
-    private static final String KEY_ID = "id";
+    private static final String KEY_INDEX = "index";
     private static final String KEY_FOOD_NAME = "foodName";
     private static final String KEY_PATH = "path";
     private static final String KEY_DATE = "date";
@@ -35,7 +35,7 @@ public class DataBaseHandler extends SQLiteOpenHelper implements dbInterface{
     public void onCreate(SQLiteDatabase db) {
         //DB를 새로 만든다.
         String CREATE_TABLE1 = "CREATE TABLE " + TABLE_NAME + "("
-                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_INDEX + " INTEGER PRIMARY KEY,"
                 + KEY_FOOD_NAME + " TEXT,"
                 + KEY_PATH + " TEXT,"
                 + KEY_DATE + " LONG " + ")";
@@ -61,6 +61,15 @@ public class DataBaseHandler extends SQLiteOpenHelper implements dbInterface{
     }
 
     @Override
+    public void deleteData(FoodData data) {
+        String query = "DELETE From "+TABLE_NAME+" Where "+ KEY_FOOD_NAME +" = "+ data.getFood_name() +" and "+ KEY_INDEX+" = "+ data.getIndex();
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.rawQuery(query, null);
+        db.close();
+    }
+
+    @Override
     public List<FoodData> getDataList() {
 
         List<FoodData> dataList = new ArrayList<>();
@@ -72,7 +81,7 @@ public class DataBaseHandler extends SQLiteOpenHelper implements dbInterface{
         if (cursor.moveToFirst()) {
             do {
                 data = new FoodData();
-                data.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+                data.setIndex(cursor.getInt(cursor.getColumnIndex(KEY_INDEX)));
                 data.setFood_name(cursor.getString(cursor.getColumnIndex(KEY_FOOD_NAME)));
                 data.setPath(cursor.getString(cursor.getColumnIndex(KEY_PATH)));
                 data.setDate(cursor.getString(cursor.getColumnIndex(KEY_DATE)));

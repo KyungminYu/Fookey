@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface dbInterface {
     void insertData(FoodData data);
+    void deleteData(FoodData data);
     List<FoodData> getDataList();
 }
