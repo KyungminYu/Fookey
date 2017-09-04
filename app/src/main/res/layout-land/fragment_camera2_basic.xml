@@ -35,10 +35,11 @@
             android:id = "@+id/guideBox"
             android:background="#00FFFFFF"
             android:src="@drawable/guide_box"/>
-        <Button
-            android:id="@+id/picture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:id="@+id/capture"
+            android:background="@drawable/capture"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center|right"
             android:text="@string/picture" />
 

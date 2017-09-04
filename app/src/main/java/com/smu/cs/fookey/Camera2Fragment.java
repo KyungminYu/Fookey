@@ -576,7 +576,7 @@ public class Camera2Fragment extends Fragment
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        view.findViewById(R.id.picture).setOnClickListener(this);
+        view.findViewById(R.id.capture).setOnClickListener(this);
         view.findViewById(R.id.info).setOnClickListener(this);
 
         guideBox = (ImageView) view.findViewById(R.id.guideBox);
@@ -656,7 +656,7 @@ public class Camera2Fragment extends Fragment
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.picture: {
+            case R.id.capture: {
                 takePicture();
                 break;
             }
