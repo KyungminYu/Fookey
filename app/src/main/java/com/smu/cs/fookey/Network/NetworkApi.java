@@ -86,8 +86,8 @@ public class NetworkApi extends AppCompatActivity {
         return mainList;
     }
 
-    public List<String> sendMainAnswer(String ans, final TextView text_result){
-        List<String> subList=null;
+    public List<String> sendMainAnswer(String ans){
+        List<String> subList;
         Call<Category> call = networkService.sendMainAnswer(ans, token.getToken());
         Category category = null;
         try {

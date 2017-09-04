@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,16 @@ public class HistoryActivity extends AppCompatActivity {
     private void initializationData() {
 
         List<FoodData> foodDatas = dbHandler.getDataList();
-        this.foodDataList = foodDatas;
+        //데이터 로드시 사진이 없다거나 하면 DB 에서 삭제하기
+        for(FoodData data : foodDatas){
+            File file = new File(data.getPath());
+            if(file.exists()){
+                this.foodDataList.add(data);
+            }
+            else{
+                DataBaseHandler.getInstance(this).deleteData(data);
+            }
+        }
         FoodData tmp1 = new FoodData("밥", "1-1", "");
         FoodData tmp2 = new FoodData("밥dfsdf", "sdfds1-1", "sdfds");
         this.foodDataList.add(tmp1);

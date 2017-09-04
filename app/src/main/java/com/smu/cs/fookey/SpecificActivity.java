@@ -25,8 +25,11 @@ import com.smu.cs.fookey.Network.Description;
 import com.smu.cs.fookey.Network.Nutrient;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class SpecificActivity extends AppCompatActivity {
     private ImageView image_food;
@@ -37,18 +40,27 @@ public class SpecificActivity extends AppCompatActivity {
     private Nutrient nutrient;
 
     private int width, height;
+
+    private DataBaseHandler dbHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_specific);
-
-
 
         initData();
 
         setImage(imgPath);
         setText(description);
         setChart(nutrient);
+
+
+        //History 를 통한 경우에는 데이터 추가 x Search 를 통한 경우에는 데이터 추가 o
+        SimpleDateFormat mformat = new SimpleDateFormat( "yyyy-MM-dd", Locale.KOREA);
+        Date date = new Date();
+        dbHandler = DataBaseHandler.getInstance(this);
+        //dbHandler.insertData(new FoodData(description.getFood_name(), imgPath, mformat.format(date)));
+        Toast.makeText(this, mformat.format(date), Toast.LENGTH_SHORT).show();
     }
     private void initData(){
         image_food = (ImageView)findViewById(R.id.image_food);
@@ -63,6 +75,7 @@ public class SpecificActivity extends AppCompatActivity {
         description= ((List<Description>)bundle.getSerializable("description")).get(0);
         nutrient = description.getNutrient();
         imgPath = intent.getStringExtra("path");
+
 
         DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
         width = dm.widthPixels;
