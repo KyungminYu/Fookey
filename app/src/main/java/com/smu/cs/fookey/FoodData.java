@@ -5,7 +5,7 @@ package com.smu.cs.fookey;
  */
 
 public class FoodData {
-    private int id;
+    private int index;
     private String food_name;
     private String path;
     private String date;
@@ -17,19 +17,19 @@ public class FoodData {
         this.path = path;
         this.date = date;
     }
-    public FoodData(int id, String food_name, String path, String date) {
-        this.id = id;
+    public FoodData(int index, String food_name, String path, String date) {
+        this.index = index;
         this.food_name = food_name;
         this.path = path;
         this.date = date;
     }
 
-    public int getId() {
-        return id;
+    public int getIndex() {
+        return index;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public String getFood_name() {
