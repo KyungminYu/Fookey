@@ -18,6 +18,7 @@ import com.smu.cs.fookey.Network.NetworkApi;
 import com.smu.cs.fookey.Network.Nutrient;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ import java.util.List;
 
 public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
     private List<FoodData> dataList;
-    private Description description;
+    private List<String> description;
     private NetworkApi networkApi;
     private void initNetworkApi(){networkApi=NetworkApi.getNetworkApi(); }
     public FoodListAdapter(List<FoodData> dataList) {
@@ -47,10 +48,17 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
                 String food_Name = dataList.get(position).getFood_name();
                 // -> 이거로 network api사용해서 정보 가져옴? 내장 db가 나을 듯 한데...
                 String path = dataList.get(position).getPath();
-                //doNetworkOperation(v.getContext(), food_Name);
-                Description description = new Description(food_Name,"한식 > 밥류","313kcal / 1공기 (210g)","안전식품", new Nutrient(91,8,1));
+                //doNetworkOperation(v.getContext(), "whiteRice");
+                List<String> desc = new ArrayList<String>();
+                desc.add(food_Name);
+                desc.add("한식 > 밥류");
+                desc.add("313kcal / 1공기 (210g)");
+                desc.add("안전식품");
+                desc.add("50");
+                desc.add("40");
+                desc.add("10");
                 Toast.makeText(v.getContext(), food_Name,  Toast.LENGTH_LONG).show();
-                IntentHandler.historyToSpecific(v.getContext(), description, path);
+                IntentHandler.historyToSpecific(v.getContext(), desc, path);
             }
         });
         view.setOnLongClickListener(new View.OnLongClickListener() {
@@ -108,7 +116,6 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
             public void run() {
                 //TODO : 시간이 걸리는 처리 삽입
                 description = networkApi.sendSubAnswer(foodName);
-
                 progDialog.dismiss();
             }
         }).start();

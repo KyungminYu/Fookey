@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.smu.cs.fookey.Network.Description;
+import com.smu.cs.fookey.Network.Nutrient;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,12 +24,11 @@ public class IntentHandler {
         Intent intent = new Intent(context, HistoryActivity.class);
         context.startActivity(intent);
     }
-    public static void historyToSpecific(Context context, Description description, String path){
+    public static void historyToSpecific(Context context, List<String> description, String path){
         Intent intent = new Intent(context, SpecificActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        List<Description> descriptionList = new ArrayList<>();
-        descriptionList.add(description);
-        bundle.putSerializable("description", (Serializable) descriptionList);
+        bundle.putSerializable("description", (Serializable) description);
         intent.putExtra("path", path);
         intent.putExtras(bundle);
         context.startActivity(intent);
@@ -38,14 +38,11 @@ public class IntentHandler {
         intent.putExtra("imgUri", imgUri);
         context.startActivity(intent);
     }
-    public static void ResultToSpecific(Context context, Description description, String path){
+    public static void ResultToSpecific(Context context, List<String> description, String path){
         Intent intent = new Intent(context, SpecificActivity.class);
-        Bundle bundle = new Bundle();
-        List<Description> descriptionList = new ArrayList<>();
-        descriptionList.add(description);
-        bundle.putSerializable("description", (Serializable) descriptionList);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("description", (Serializable) description);
         intent.putExtra("path", path);
-        intent.putExtras(bundle);
         context.startActivity(intent);
     }
 }

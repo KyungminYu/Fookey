@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smu.cs.fookey.Network.Description;
 import com.smu.cs.fookey.Network.NetworkApi;
@@ -30,7 +31,7 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
     private Context mContext;
     private boolean flag;
     private List<String> res = null;
-    private Description description;
+    private List<String> description = null;
     private int width, height;
 
     private NetworkApi networkApi;
@@ -40,7 +41,7 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
     private Handler confirmHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            //완료 후 실행할 처리 삽입
+
             resultText.setText(res.get(0));
         }
     };
@@ -104,15 +105,13 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_yes:
+                Log.i("TEST", flag + " :" + res.get(0));
                 if(!flag) {
+                    flag = true;
                     doNetworkOperation(SEND_MAIN_ANSWER);
                 }
-                else {
-                    //doNetworkOperation(SEND_SUB_ANSWER);
-
-                    Description description = new Description(res.get(0), "한식 > 밥류", "313kcal / 1공기 (210g)", "안전식품", new Nutrient(91, 8, 1));
-                    finish();
-                    IntentHandler.ResultToSpecific(mContext, description, imgPath);
+                else{
+                    doNetworkOperation(SEND_SUB_ANSWER);
                 }
                 break;
             case R.id.btn_no:
@@ -132,22 +131,24 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public void run() {
             super.run();
+            Message message = new Message();
             if(status == SEND_IMAGE){
                 //TODO : 시간이 걸리는 처리 삽입
                 res = networkApi.sendImage(mContext, imgPath);
-                //Handler를 호출
                 confirmHandler.sendEmptyMessage(0);
-                progDialog.dismiss();
             }
             else if(status == SEND_MAIN_ANSWER){
                 //TODO : 시간이 걸리는 처리 삽입
                 res = networkApi.sendMainAnswer(res.get(0));
-                //Handler를 호출
                 confirmHandler.sendEmptyMessage(0);
             }
             else if(status == SEND_SUB_ANSWER){
                 //TODO : 시간이 걸리는 처리 삽입
                 description = networkApi.sendSubAnswer(res.get(0));
+                Log.w("TTTTTTTT", res.get(0));
+                //Description description = new Description(res.get(0), "한식 > 밥류", "313kcal / 1공기 (210g)", "안전식품", new Nutrient(91, 8, 1));
+                finish();
+                IntentHandler.ResultToSpecific(mContext, description, imgPath);
             }
             progDialog.dismiss();
         }

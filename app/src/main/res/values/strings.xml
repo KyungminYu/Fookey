@@ -17,4 +17,55 @@
     <string name="picture">Picture</string>
     <string name="description_info">Info</string>
     <string name="request_permission">This app needs camera permission.</string>
+
+    <string-array name="weightArray">
+        <item>40</item>
+        <item>45</item>
+        <item>50</item>
+        <item>55</item>
+        <item>60</item>
+        <item>65</item>
+        <item>70</item>
+        <item>75</item>
+        <item>80</item>
+        <item>85</item>보통
+        <item>90</item>
+        <item>95</item>
+        <item>100</item>
+    </string-array>
+    <string-array name="walkingArray">
+        <item>For walking</item>
+        <item>Slightly faster</item>
+        <item>Fast</item>
+        <item>Presto</item>
+    </string-array>
+    <string name="map_walking">{\"For walking\":\"2.0\",\"Slightly faster\":\"3.8\",\"Fast\":\"4.0\",\"Presto\":\"6.5\"}</string>
+
+    <string-array name="jumpRopeArray">
+        <item>Slowly</item>
+        <item>Usually</item>
+        <item>Quickly</item>
+    </string-array>
+    <string name="map_jumpRope">{\"Slowly\":\"8.0\",\"Usually\":\"10.0\",\"Quickly\":\"12.0\"}</string>
+
+    <string-array name="bikeArray">
+        <item>Lightly</item>
+        <item>Usually</item>
+        <item>Fast</item>
+    </string-array>
+    <string name="map_bike">{\"Lightly\":\"6.0\",\"Usually\":\"8.0\",\"Fast\":\"10.0\"}</string>
+
+    <string-array name="fitnessArray">
+        <item>Lightly</item>
+        <item>Usually</item>
+        <item>Hard</item>
+    </string-array>
+    <string name="map_fitness">{\"Lightly\":\"3.85\",\"Usually\":\"5.5\",\"Hard\":\"8.25\"}</string>
+
+    <string-array name="swimmingArray">
+        <item>Slowly</item>
+        <item>Usually</item>
+        <item>Quickly</item>
+    </string-array>
+    <string name="map_swimming">{\"Slowly\":\"8.0\",\"Usually\":\"9.0\",\"Quickly\":\"11.0\"}</string>
 </resources>

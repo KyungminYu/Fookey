@@ -102,18 +102,20 @@ public class NetworkApi extends AppCompatActivity {
         return subList;
     }
 
-    public Description sendSubAnswer(String ans){
-        Description retDesc = null;
-        Call<Description> call = networkService.sendSubAnswer(ans,token.getToken());
+    public List<String> sendSubAnswer(String ans){
+        List<String> retDesc = null;
+        Call<Description> call = networkService.sendSubAnswer(ans, token.getToken());
+        Description description = null;
         try {
-            retDesc = call.execute().body();
+            description = call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
         }
         if(call.isExecuted())
-            return retDesc;
+            retDesc = description.getFood_info();
         else
-            return null;
+            retDesc = new ArrayList<>();
+        return retDesc;
     }
 
     private MultipartBody.Part getCompressedImage(Context context, String path){

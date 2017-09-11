@@ -19,7 +19,7 @@ public class DataBaseHandler extends SQLiteOpenHelper implements dbInterface{
     // Database Name
     private static final String DATABASE_NAME = "DB";
     private static final String TABLE_NAME = "foodDataTable";
-    private static final String KEY_INDEX = "index";
+    private static final String KEY_INDEX = "ind";
     private static final String KEY_FOOD_NAME = "foodName";
     private static final String KEY_PATH = "path";
     private static final String KEY_DATE = "date";
