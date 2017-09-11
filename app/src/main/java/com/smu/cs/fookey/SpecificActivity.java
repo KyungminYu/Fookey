@@ -66,13 +66,17 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
         initData();
 
         setImage(imgPath);
+        //if(description == null)
+         //   Toast.makeText(this, "DES NULL", Toast.LENGTH_SHORT).show();
+        //el/se
+        //    Toast.makeText(this, "DES NOT NULL", Toast.LENGTH_SHORT).show();
         setText(description);
         setChart(description);
         setTable();
 
 
         //History 를 통한 경우에는 데이터 추가 x Search 를 통한 경우에는 데이터 추가 o
-        SimpleDateFormat mformat = new SimpleDateFormat( "yyyy-MM-dd", Locale.KOREA);
+        SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
         Date date = new Date();
         //dbHandler.insertData(new FoodData(description.getFood_name(), imgPath, mformat.format(date)));
         //Toast.makeText(this, mformat.format(date), Toast.LENGTH_SHORT).show();
@@ -99,11 +103,32 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
         spinner_fitnessIntensity = (Spinner)findViewById(R.id.spinner_fitnessIntensity);
         spinner_swimmingIntensity = (Spinner)findViewById(R.id.spinner_swimmingIntensity);
 
-        walkdata = new Gson().fromJson(getString(R.string.map_walking), new TypeToken<HashMap<String, String>>(){}.getType());
-        jumpRopedata = new Gson().fromJson(getString(R.string.map_jumpRope), new TypeToken<HashMap<String, String>>(){}.getType());
-        bikedata = new Gson().fromJson(getString(R.string.map_bike), new TypeToken<HashMap<String, String>>(){}.getType());
-        fitnessdata = new Gson().fromJson(getString(R.string.map_fitness), new TypeToken<HashMap<String, String>>(){}.getType());
-        swimmingdata = new Gson().fromJson(getString(R.string.map_swimming), new TypeToken<HashMap<String, String>>(){}.getType());
+        walkdata = new HashMap<>();
+        jumpRopedata = new HashMap<>();
+        bikedata = new HashMap<>();
+        fitnessdata = new HashMap<>();
+        swimmingdata = new HashMap<>();
+
+        walkdata.put("For walking", "2.0");
+        walkdata.put("Slightly faster", "3.8");
+        walkdata.put("Fast", "4.0");
+        walkdata.put("Presto", "6.5");
+
+        jumpRopedata.put("Slowly", "8.0");
+        jumpRopedata.put("Usually", "10.0");
+        jumpRopedata.put("Quickly", "12.0");
+
+        bikedata.put("Lightly", "6.0");
+        bikedata.put("Usually", "8.0");
+        bikedata.put("Fast", "10.0");
+
+        fitnessdata.put("Lightly", "3.85");
+        fitnessdata.put("Usually", "5.5");
+        fitnessdata.put("Hard", "8.25");
+
+        swimmingdata.put("Slowly", "8.0");
+        swimmingdata.put("Usually", "9.0");
+        swimmingdata.put("Quickly", "11.0");
 
         Intent intent = getIntent();
         description = (List<String>) intent.getSerializableExtra("description");
@@ -130,7 +155,7 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
         text_foodName.setText(textData.get(0));
         text_foodCategory.setText(textData.get(1));
         text_foodCalorie.setText(textData.get(2));
-        text_foodSafety.setText("영양 안전도: " + textData.get(3));
+        text_foodSafety.setText("Nutrition Safety: " + textData.get(3));
     }
     private void setTableText(){
         text_walkingTime.setText(walkingTime + "min");
@@ -180,9 +205,9 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
     }
     private void setChart(List<String> chartData){
         ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(Float.parseFloat(chartData.get(4)), "탄수화물"));
-        entries.add(new PieEntry(Float.parseFloat(chartData.get(5)), "단백질"));
-        entries.add(new PieEntry(Float.parseFloat(chartData.get(6)), "지방"));
+        entries.add(new PieEntry(Float.parseFloat(chartData.get(4)), "Carbohydrate"));
+        entries.add(new PieEntry(Float.parseFloat(chartData.get(5)), "Protine"));
+        entries.add(new PieEntry(Float.parseFloat(chartData.get(6)), "Fat"));
 
 
         PieDataSet dataSet = new PieDataSet(entries, "");
@@ -207,32 +232,31 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         switch (parent.getId()){
             case R.id.spinner_weight:
-                weight = Integer.parseInt(spinner_weight.getAdapter().getItem(position).toString().trim());
-                Toast.makeText(this, weight + "", Toast.LENGTH_SHORT).show();
+                weight = Integer.parseInt(spinner_weight.getAdapter().getItem(position).toString());
                 break;
             case R.id.spinner_walkingIntensity:
-                walkingIntensity = spinner_walkingIntensity.getAdapter().getItem(position).toString().trim();
+                walkingIntensity = spinner_walkingIntensity.getAdapter().getItem(position).toString();
+                walkingTime = getEventTime(Double.parseDouble(walkdata.get(walkingIntensity)));
                 break;
             case R.id.spinner_jumpRopeIntensity:
-                ropeJumpIntensity = spinner_jumpRopeIntensity.getAdapter().getItem(position).toString().trim();
+                ropeJumpIntensity = spinner_jumpRopeIntensity.getAdapter().getItem(position).toString();
+                jumpRopeTime = getEventTime(Double.parseDouble(jumpRopedata.get(ropeJumpIntensity)));
                 break;
             case R.id.spinner_bikeIntensity:
-                bikeIntensity = spinner_bikeIntensity.getAdapter().getItem(position).toString().trim();
+                bikeIntensity = spinner_bikeIntensity.getAdapter().getItem(position).toString();
+                bikeTime = getEventTime(Double.parseDouble(bikedata.get(bikeIntensity)));
                 break;
             case R.id.spinner_fitnessIntensity:
-                fitnessIntensity = spinner_fitnessIntensity.getAdapter().getItem(position).toString().trim();
+                fitnessIntensity = spinner_fitnessIntensity.getAdapter().getItem(position).toString();
+                fitnessTime = getEventTime(Double.parseDouble(fitnessdata.get(fitnessIntensity)));
                 break;
             case R.id.spinner_swimmingIntensity:
-                swimmingIntesity = spinner_swimmingIntensity.getAdapter().getItem(position).toString().trim();
+                swimmingIntesity = spinner_swimmingIntensity.getAdapter().getItem(position).toString();
+                swimmingTime = getEventTime(Double.parseDouble(swimmingdata.get(swimmingIntesity)));
                 break;
             default:
                 break;
         }
-        walkingTime = getEventTime(Double.parseDouble(walkdata.get(walkingIntensity)));
-        jumpRopeTime = getEventTime(Double.parseDouble(jumpRopedata.get(ropeJumpIntensity)));
-        bikeTime = getEventTime(Double.parseDouble(bikedata.get(bikeIntensity)));
-        fitnessTime = getEventTime(Double.parseDouble(fitnessdata.get(fitnessIntensity)));
-        swimmingTime = getEventTime(Double.parseDouble(swimmingdata.get(swimmingIntesity)));
         setTableText();
     }
 

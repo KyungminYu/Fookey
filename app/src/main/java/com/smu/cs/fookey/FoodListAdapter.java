@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,17 +49,17 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
                 String food_Name = dataList.get(position).getFood_name();
                 // -> 이거로 network api사용해서 정보 가져옴? 내장 db가 나을 듯 한데...
                 String path = dataList.get(position).getPath();
-                //doNetworkOperation(v.getContext(), "whiteRice");
-                List<String> desc = new ArrayList<String>();
-                desc.add(food_Name);
-                desc.add("한식 > 밥류");
-                desc.add("313kcal / 1공기 (210g)");
-                desc.add("안전식품");
-                desc.add("50");
-                desc.add("40");
-                desc.add("10");
+                doNetworkOperation(v.getContext(), "WhiteRice");
+//                List<String> desc = new ArrayList<String>();
+//                desc.add(food_Name);
+//                desc.add("한식 > 밥류");
+//                desc.add("313kcal / 1공기 (210g)");
+//                desc.add("안전식품");
+//                desc.add("50");
+//                desc.add("40");
+//                desc.add("10");
                 Toast.makeText(v.getContext(), food_Name,  Toast.LENGTH_LONG).show();
-                IntentHandler.historyToSpecific(v.getContext(), desc, path);
+                IntentHandler.historyToSpecific(v.getContext(), description, path);
             }
         });
         view.setOnLongClickListener(new View.OnLongClickListener() {
@@ -68,12 +69,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
                 final String path = dataList.get(position).getPath();
                 final String food_Name = dataList.get(position).getFood_name();
                 final String date = dataList.get(position).getDate();
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                        v.getContext());
-
-                // 제목셋팅
-                //alertDialogBuilder.setTitle("삭제하시겠습니까?");
-
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(v.getContext());
                 // AlertDialog 셋팅
                 alertDialogBuilder
                         .setMessage("삭제하시겠습니까?")
@@ -82,7 +78,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         // 프로그램을 종료한다
-                                        //DataBaseHandler.getInstance(v.getContext()).deleteData(new FoodData(position, food_Name, path, date));
+                                        DataBaseHandler.getInstance(v.getContext()).deleteData(new FoodData(position, food_Name, path, date));
                                         dialog.dismiss();
                                     }
                                 })

@@ -39,33 +39,28 @@
         <item>Fast</item>
         <item>Presto</item>
     </string-array>
-    <string name="map_walking">{\"For walking\":\"2.0\",\"Slightly faster\":\"3.8\",\"Fast\":\"4.0\",\"Presto\":\"6.5\"}</string>
 
     <string-array name="jumpRopeArray">
         <item>Slowly</item>
         <item>Usually</item>
         <item>Quickly</item>
     </string-array>
-    <string name="map_jumpRope">{\"Slowly\":\"8.0\",\"Usually\":\"10.0\",\"Quickly\":\"12.0\"}</string>
 
     <string-array name="bikeArray">
         <item>Lightly</item>
         <item>Usually</item>
         <item>Fast</item>
     </string-array>
-    <string name="map_bike">{\"Lightly\":\"6.0\",\"Usually\":\"8.0\",\"Fast\":\"10.0\"}</string>
 
     <string-array name="fitnessArray">
         <item>Lightly</item>
         <item>Usually</item>
         <item>Hard</item>
     </string-array>
-    <string name="map_fitness">{\"Lightly\":\"3.85\",\"Usually\":\"5.5\",\"Hard\":\"8.25\"}</string>
 
     <string-array name="swimmingArray">
         <item>Slowly</item>
         <item>Usually</item>
         <item>Quickly</item>
     </string-array>
-    <string name="map_swimming">{\"Slowly\":\"8.0\",\"Usually\":\"9.0\",\"Quickly\":\"11.0\"}</string>
 </resources>

@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:textAlignment="center"
-                android:text="이음식이 " />
+                android:text="This food is " />
             <TextView
                 android:id="@+id/text_result"
                 android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:textAlignment="center"
-                android:text="인가요?" />
+                android:text="\?" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -68,12 +68,12 @@
             android:gravity="center">
             <Button
                 android:id="@+id/btn_yes"
-                android:text="맞음"
+                android:text="Yes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <Button
                 android:id="@+id/btn_no"
-                android:text="아님"
+                android:text="No"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             </LinearLayout>
