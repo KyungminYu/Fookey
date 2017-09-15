@@ -1,36 +1,23 @@
 package com.smu.cs.fookey;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.provider.DocumentFile;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.smu.cs.fookey.Network.Description;
-import com.smu.cs.fookey.Network.Nutrient;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -52,10 +39,10 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
     private ArrayAdapter<CharSequence> adapter;
     private HashMap<String, String> walkdata, jumpRopedata, bikedata, fitnessdata, swimmingdata;
     private String walkingIntensity, ropeJumpIntensity, bikeIntensity, fitnessIntensity, swimmingIntesity;
-    private int weight, cal, walkingTime, jumpRopeTime, bikeTime, fitnessTime, swimmingTime;
-
-    private int width, height;
-
+    private int weight, walkingTime, jumpRopeTime, bikeTime, fitnessTime, swimmingTime;
+    private double cal;
+    private int width, height, flag;
+    private DataBaseHandler dbHandler;
 
 
     @Override
@@ -73,16 +60,22 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
         setText(description);
         setChart(description);
         setTable();
-
+        if(flag == 1){
+            dbHandler = DataBaseHandler.getInstance(this);
+            SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+            Date date = new Date();
+            dbHandler.insertData(new FoodData(description.get(0), imgPath, mformat.format(date)));
+        }
 
         //History 를 통한 경우에는 데이터 추가 x Search 를 통한 경우에는 데이터 추가 o
-        SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
-        Date date = new Date();
+
         //dbHandler.insertData(new FoodData(description.getFood_name(), imgPath, mformat.format(date)));
         //Toast.makeText(this, mformat.format(date), Toast.LENGTH_SHORT).show();
     }
 
     private void initData(){
+
+
         image_food = (ImageView)findViewById(R.id.image_food);
         text_foodName = (TextView)findViewById(R.id.text_foodName);
         text_foodCategory = (TextView)findViewById(R.id.text_foodCategory);
@@ -133,6 +126,9 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
         Intent intent = getIntent();
         description = (List<String>) intent.getSerializableExtra("description");
         imgPath = intent.getStringExtra("path");
+        flag  = intent.getIntExtra("flag", 0);
+
+
 
         DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
         width = dm.widthPixels;
@@ -164,11 +160,11 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
         text_fitnessTime.setText(fitnessTime + "min");
         text_swimmingTime.setText(swimmingTime + "min");
     }
-    private void setTable(){
+    private void setTable(){   //테이블 셋팅을 하는 부분.
         StringTokenizer st = new StringTokenizer(description.get(2), " ");
         String calText = st.nextToken();
         st = new StringTokenizer(calText, "k");
-        cal = Integer.parseInt(st.nextToken());
+        cal = Double.parseDouble(st.nextToken());
 
         adapter = ArrayAdapter.createFromResource(this, R.array.weightArray, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -201,7 +197,20 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
         spinner_fitnessIntensity.setOnItemSelectedListener(this);
         spinner_swimmingIntensity.setOnItemSelectedListener(this);
 
-
+        //내가 추가한 부분
+        weight = Integer.parseInt(spinner_weight.getAdapter().getItem(0).toString());
+        walkingIntensity = spinner_walkingIntensity.getAdapter().getItem(0).toString();
+        walkingTime = getEventTime(Double.parseDouble(walkdata.get(walkingIntensity)));
+        ropeJumpIntensity = spinner_jumpRopeIntensity.getAdapter().getItem(0).toString();
+        jumpRopeTime = getEventTime(Double.parseDouble(jumpRopedata.get(ropeJumpIntensity)));
+        bikeIntensity = spinner_bikeIntensity.getAdapter().getItem(0).toString();
+        bikeTime = getEventTime(Double.parseDouble(bikedata.get(bikeIntensity)));
+        fitnessIntensity = spinner_fitnessIntensity.getAdapter().getItem(0).toString();
+        fitnessTime = getEventTime(Double.parseDouble(fitnessdata.get(fitnessIntensity)));
+        swimmingIntesity = spinner_swimmingIntensity.getAdapter().getItem(0).toString();
+        swimmingTime = getEventTime(Double.parseDouble(swimmingdata.get(swimmingIntesity)));
+        setTableText();
+        //여기에 setTableText() 를 넣어줘야 할 것 같다.
     }
     private void setChart(List<String> chartData){
         ArrayList<PieEntry> entries = new ArrayList<>();
@@ -226,13 +235,19 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
 
     }
     public int getEventTime(double intensity){
-        return (int) Math.round(cal / (3.5) * (1.0 / 200) * intensity * weight);
+        return (int) Math.round(cal / ((3.5) * (1.0 / 200) * intensity * weight));
     }
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {    //아이템을 선택했을때 호출되는 콜백함수
         switch (parent.getId()){
             case R.id.spinner_weight:
+               // Log.d("weight","inininininin");
                 weight = Integer.parseInt(spinner_weight.getAdapter().getItem(position).toString());
+                walkingTime = getEventTime(Double.parseDouble(walkdata.get(walkingIntensity)));
+                jumpRopeTime = getEventTime(Double.parseDouble(jumpRopedata.get(ropeJumpIntensity)));
+                bikeTime = getEventTime(Double.parseDouble(bikedata.get(bikeIntensity)));
+                fitnessTime = getEventTime(Double.parseDouble(fitnessdata.get(fitnessIntensity)));
+                swimmingTime = getEventTime(Double.parseDouble(swimmingdata.get(swimmingIntesity)));
                 break;
             case R.id.spinner_walkingIntensity:
                 walkingIntensity = spinner_walkingIntensity.getAdapter().getItem(position).toString();

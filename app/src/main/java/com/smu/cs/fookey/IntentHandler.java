@@ -4,11 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.smu.cs.fookey.Network.Description;
-import com.smu.cs.fookey.Network.Nutrient;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +26,7 @@ public class IntentHandler {
         Bundle bundle = new Bundle();
         bundle.putSerializable("description", (Serializable) description);
         intent.putExtra("path", path);
+        intent.putExtra("flag", 0);
         intent.putExtras(bundle);
         context.startActivity(intent);
     }
@@ -43,6 +40,7 @@ public class IntentHandler {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("description", (Serializable) description);
         intent.putExtra("path", path);
+        intent.putExtra("flag", 1);
         context.startActivity(intent);
     }
 }
