@@ -128,8 +128,6 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
         imgPath = intent.getStringExtra("path");
         flag  = intent.getIntExtra("flag", 0);
 
-
-
         DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
         width = dm.widthPixels;
         height = dm.heightPixels;
@@ -141,10 +139,8 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
             Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             //int len = bitmap.getWidth() < bitmap.getHeight() ? bitmap.getWidth() : bitmap.getHeight();
             image_food.setImageBitmap(bitmap);
-            image_food.getLayoutParams().height = width;
-            //image_food.getLayoutParams().width = width;
+            image_food.getLayoutParams().height = image_food.getLayoutParams().width = width;
             image_food.setRotation(90);
-            image_food.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
     }
     private void setText(List<String> textData){
@@ -215,7 +211,7 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
     private void setChart(List<String> chartData){
         ArrayList<PieEntry> entries = new ArrayList<>();
         entries.add(new PieEntry(Float.parseFloat(chartData.get(4)), "Carbohydrate"));
-        entries.add(new PieEntry(Float.parseFloat(chartData.get(5)), "Protine"));
+        entries.add(new PieEntry(Float.parseFloat(chartData.get(5)), "Protein"));
         entries.add(new PieEntry(Float.parseFloat(chartData.get(6)), "Fat"));
 
 
@@ -241,7 +237,6 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {    //아이템을 선택했을때 호출되는 콜백함수
         switch (parent.getId()){
             case R.id.spinner_weight:
-               // Log.d("weight","inininininin");
                 weight = Integer.parseInt(spinner_weight.getAdapter().getItem(position).toString());
                 walkingTime = getEventTime(Double.parseDouble(walkdata.get(walkingIntensity)));
                 jumpRopeTime = getEventTime(Double.parseDouble(jumpRopedata.get(ropeJumpIntensity)));

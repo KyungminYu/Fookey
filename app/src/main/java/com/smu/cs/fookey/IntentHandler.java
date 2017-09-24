@@ -23,11 +23,9 @@ public class IntentHandler {
     public static void historyToSpecific(Context context, List<String> description, String path){
         Intent intent = new Intent(context, SpecificActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("description", (Serializable) description);
+        intent.putExtra("description", (Serializable) description);
         intent.putExtra("path", path);
         intent.putExtra("flag", 0);
-        intent.putExtras(bundle);
         context.startActivity(intent);
     }
     public static void SearchToResult(Context context, String imgUri){

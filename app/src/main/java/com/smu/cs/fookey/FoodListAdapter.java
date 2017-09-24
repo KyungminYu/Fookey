@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.smu.cs.fookey.Network.NetworkApi;
 
 import java.io.File;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by LG on 2017-08-18.
@@ -32,9 +34,13 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
     }
     private ProgressDialog progDialog;
 
+    private _Thread networkThread;
+    private Context mContext;
+    private String path;
     @Override
     public FoodDataHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+        mContext = view.getContext();
         final FoodDataHolder holder = new FoodDataHolder(view);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,18 +49,8 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
                 final int position = holder.getAdapterPosition();
                 String food_Name = dataList.get(position).getFood_name();
                 // -> 이거로 network api사용해서 정보 가져옴? 내장 db가 나을 듯 한데...
-                String path = dataList.get(position).getPath();
+                path = dataList.get(position).getPath();
                 doNetworkOperation(v.getContext(), food_Name);
-//                List<String> desc = new ArrayList<String>();
-//                desc.add(food_Name);
-//                desc.add("한식 > 밥류");
-//                desc.add("313kcal / 1공기 (210g)");
-//                desc.add("안전식품");
-//                desc.add("50");
-//                desc.add("40");
-//                desc.add("10");
-                Toast.makeText(v.getContext(), food_Name,  Toast.LENGTH_LONG).show();
-                IntentHandler.historyToSpecific(v.getContext(), description, path);
             }
         });
         view.setOnLongClickListener(new View.OnLongClickListener() {
@@ -101,15 +97,8 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
 
         progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progDialog.setMessage("please wait....");
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //TODO : 시간이 걸리는 처리 삽입
-                description = networkApi.sendSubAnswer(foodName);
-                progDialog.dismiss();
-            }
-        }).start();
+        networkThread = new _Thread(foodName);
+        networkThread.start();
     }
     @Override
     public void onBindViewHolder(FoodDataHolder holder, int position) {
@@ -118,14 +107,35 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
         holder.image_food.setImageResource(R.drawable.logo);
         File imgFile = new File(foodData.getPath());
         if (imgFile.exists()) {
+
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             holder.image_food.setImageBitmap(myBitmap);
         }
+
+        holder.image_food.setRotation(90);
         holder.text_category.setText(foodData.getFood_name());
         holder.text_date.setText(foodData.getDate());
     }
     @Override
     public int getItemCount() {
         return (dataList.size() > 0) ? dataList.size() : 0;
+    }
+
+
+
+    class _Thread extends Thread{
+        private String foodName;
+        public _Thread(String foodName){
+            this.foodName = foodName;
+        }
+        @Override
+        public void run() {
+            super.run();
+                //TODO : 시간이 걸리는 처리 삽입
+            description = networkApi.sendSubAnswer(foodName);
+
+            progDialog.dismiss();
+            IntentHandler.historyToSpecific(mContext, description, path);
+        }
     }
 }

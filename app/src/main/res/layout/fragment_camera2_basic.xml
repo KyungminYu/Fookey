@@ -35,8 +35,8 @@
     <ImageButton
         android:id="@+id/capture"
         android:background="@drawable/capture"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_gravity="center|bottom"
         android:layout_margin="20dp"
         android:text="@string/picture" />

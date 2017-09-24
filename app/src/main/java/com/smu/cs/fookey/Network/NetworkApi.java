@@ -116,6 +116,8 @@ public class NetworkApi extends AppCompatActivity {
             retDesc = description.getFood_info();
         else
             retDesc = new ArrayList<>();
+
+        Log.i("NET", retDesc.get(0));
         return retDesc;
     }
 
