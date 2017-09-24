@@ -136,9 +136,14 @@ public class SpecificActivity extends AppCompatActivity implements AdapterView.O
         //Log.i("PATH", Path);
         File imgFile = new  File(Path);
         if(imgFile.exists()) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            //int len = bitmap.getWidth() < bitmap.getHeight() ? bitmap.getWidth() : bitmap.getHeight();
-            image_food.setImageBitmap(bitmap);
+            BitmapFactory.Options opt = new BitmapFactory.Options();
+            opt.inPreferredConfig = Bitmap.Config.RGB_565;
+            opt.inSampleSize = 1;
+            opt.inPurgeable = true;
+            Bitmap src = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), opt);
+            Bitmap resize = Bitmap.createScaledBitmap(src, opt.outWidth, opt.outHeight, true);
+
+            image_food.setImageBitmap(resize);
             image_food.getLayoutParams().height = image_food.getLayoutParams().width = width;
             image_food.setRotation(90);
         }

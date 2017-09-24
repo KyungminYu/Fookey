@@ -62,7 +62,7 @@ public class DataBaseHandler extends SQLiteOpenHelper implements dbInterface{
 
     @Override
     public void deleteData(FoodData data) {
-        String query = "DELETE From "+TABLE_NAME+" Where "+ KEY_FOOD_NAME +" = "+ data.getFood_name() +" and "+ KEY_INDEX+" = "+ data.getIndex();
+        String query = "DELETE From "+TABLE_NAME+" Where "+ KEY_FOOD_NAME +" = '"+ data.getFood_name() +"' and "+ KEY_INDEX+" = "+ data.getIndex();
 
         SQLiteDatabase db = this.getWritableDatabase();
         db.rawQuery(query, null);

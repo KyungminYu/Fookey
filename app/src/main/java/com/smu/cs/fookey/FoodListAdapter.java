@@ -108,11 +108,17 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
         File imgFile = new File(foodData.getPath());
         if (imgFile.exists()) {
 
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            holder.image_food.setImageBitmap(myBitmap);
-        }
 
-        holder.image_food.setRotation(90);
+            BitmapFactory.Options opt = new BitmapFactory.Options();
+            opt.inPreferredConfig = Bitmap.Config.RGB_565;
+            opt.inSampleSize = 1;
+            opt.inPurgeable = true;
+            Bitmap src = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), opt);
+            Bitmap resize = Bitmap.createScaledBitmap(src, opt.outWidth, opt.outHeight, true);
+
+            holder.image_food.setImageBitmap(resize);
+            holder.image_food.setRotation(90);
+        }
         holder.text_category.setText(foodData.getFood_name());
         holder.text_date.setText(foodData.getDate());
     }

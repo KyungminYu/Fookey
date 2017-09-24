@@ -91,11 +91,17 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         Log.i("PATH", Path);
         File imgFile = new  File(Path);
         if(imgFile.exists()){
-            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            int len = bitmap.getWidth() < bitmap.getHeight() ? bitmap.getWidth() : bitmap.getHeight();
-            image_result.setImageBitmap(bitmap);
+
+            BitmapFactory.Options opt = new BitmapFactory.Options();
+            opt.inPreferredConfig = Bitmap.Config.RGB_565;
+            opt.inSampleSize = 1;
+            opt.inPurgeable = true;
+            Bitmap src = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), opt);
+            Bitmap resize = Bitmap.createScaledBitmap(src, opt.outWidth, opt.outHeight, true);
+
+            image_result.setImageBitmap(resize);
+            image_result.getLayoutParams().height = image_result.getLayoutParams().width = width;
             image_result.setRotation(90);
-            image_result.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
     }
     @Override
