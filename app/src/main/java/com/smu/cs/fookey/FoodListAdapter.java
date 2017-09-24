@@ -1,6 +1,5 @@
 package com.smu.cs.fookey;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,18 +7,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.smu.cs.fookey.Network.Description;
 import com.smu.cs.fookey.Network.NetworkApi;
-import com.smu.cs.fookey.Network.Nutrient;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,7 +44,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodDataHolder> {
                 String food_Name = dataList.get(position).getFood_name();
                 // -> 이거로 network api사용해서 정보 가져옴? 내장 db가 나을 듯 한데...
                 String path = dataList.get(position).getPath();
-                doNetworkOperation(v.getContext(), "WhiteRice");
+                doNetworkOperation(v.getContext(), food_Name);
 //                List<String> desc = new ArrayList<String>();
 //                desc.add(food_Name);
 //                desc.add("한식 > 밥류");

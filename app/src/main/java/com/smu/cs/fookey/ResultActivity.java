@@ -4,21 +4,18 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.smu.cs.fookey.Network.Description;
 import com.smu.cs.fookey.Network.NetworkApi;
-import com.smu.cs.fookey.Network.Nutrient;
 
 import java.io.File;
 import java.util.List;
@@ -45,6 +42,7 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
             resultText.setText(res.get(0));
         }
     };
+
     private _Thread networkThread;
 
     private final String SEND_IMAGE = "sendImage";
@@ -55,7 +53,6 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
-
         initData();
         initDialog();
         initNetworkApi();
@@ -131,7 +128,7 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public void run() {
             super.run();
-            Message message = new Message();
+            //Message message = new Message();
             if(status == SEND_IMAGE){
                 //TODO : 시간이 걸리는 처리 삽입
                 res = networkApi.sendImage(mContext, imgPath);

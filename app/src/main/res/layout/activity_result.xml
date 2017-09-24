@@ -32,7 +32,6 @@
             app:scale_top="300"
             app:scale_width="250"
             app:scale_height="30"
-            app:scale_textsize="20"
             android:orientation="horizontal"
             android:gravity="center">
 
@@ -41,6 +40,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:textAlignment="center"
+                android:textSize="20dp"
                 android:text="This food is " />
             <TextView
                 android:id="@+id/text_result"
@@ -48,12 +48,14 @@
                 android:layout_height="wrap_content"
                 android:textColor="#FF0000"
                 android:textAlignment="center"
+                android:textSize="20dp"
                 android:text="---" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:textAlignment="center"
+                android:textSize="20dp"
                 android:text="\?" />
         </LinearLayout>
         <LinearLayout
