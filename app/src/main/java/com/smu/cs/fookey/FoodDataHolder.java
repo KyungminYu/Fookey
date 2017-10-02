@@ -10,6 +10,7 @@ import android.widget.TextView;
  */
 
 public class FoodDataHolder extends RecyclerView.ViewHolder{
+
     public ImageView image_food;
     public TextView text_category, text_date;
     public FoodDataHolder(View itemView) {
